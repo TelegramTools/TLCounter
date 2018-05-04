@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/TelegramTools/TLImporter/raw/master/images/Intro.png">
+  <img src="https://raw.githubusercontent.com/TelegramTools/TLCounter/master/images/TLCounter.png">
  </p>
 
 # TLCounter
