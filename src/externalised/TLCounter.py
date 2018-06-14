@@ -16,7 +16,7 @@ import json
 with open('config.json', 'r') as f:
     config = json.load(f)
 
-version = "1.6"
+version = "1.7"
 TotalDialogs = 0
 UserCount = 0
 ChannelCount = 0
@@ -32,7 +32,7 @@ api_id = config['api_id']
 api_hash = config['api_hash']
 TLdevice_model = 'Desktop device'
 TLsystem_version = 'Console'
-TLapp_version = '- TLCounter 1.6'
+TLapp_version = '- TLCounter ' + version
 TLlang_code = 'en'
 TLsystem_lang_code = 'en'
 client = TelegramClient('UserSession', api_id, api_hash, device_model=TLdevice_model, system_version=TLsystem_version, app_version=TLapp_version, lang_code=TLlang_code, system_lang_code=TLsystem_lang_code)
