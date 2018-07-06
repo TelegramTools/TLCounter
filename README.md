@@ -8,7 +8,7 @@ and normal groups/single chats. That's all.
 
 ## Downloads
 
-You can always find the latest version of the app in the [Releases tab](https://github.com/TelegramTools/TLCounter/releases)
+You can always find the latest version of the app in the [Releases tab](https://github.com/TelegramTools/TLCounter/releases).
 Binaries for Windows are included and bundled as an .exe executable (thanks to Pyinstaller!). If you want to use this python script in Mac or Linux, you will
 be able to, using the compiled binaries also included in the file you will get from the Releases Tab. Make sure that you have Python3 installed and also
 Telethon: `pip install -r requirements.txt`.
