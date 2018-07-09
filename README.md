@@ -9,14 +9,12 @@ and normal groups/single chats. That's all.
 ## Downloads
 
 You can always find the latest version of the app in the [Releases tab](https://github.com/TelegramTools/TLCounter/releases).
-Binaries for Windows are included and bundled as an .exe executable (thanks to Pyinstaller!). If you want to use this python script in Mac or Linux, you will
-be able to, using the compiled binaries also included in the file you will get from the Releases Tab. Make sure that you have Python3 installed and also pip. Run this command: `pip install -r requirements.txt`.
+
+Binaries for Windows are included and bundled as an .exe executable. If you want to use this python script in Mac or Linux, you will be able to, using the compiled binaries under the *bin* folder. Whenever you are running the compiled binary, make sure that you have Python3 installed in your system and also pip. Run this command: `pip install -r requirements.txt` before running the app.
 
 ## Building sources
 
-Replace the apiID and ApiHash in the python script with your own values obtained in https://my.telegram.org/auth - API Development Tools. I used Visual Studio
-as my IDE, but you can use Pycharm or any text editor to edit the script. You can also make a pull request or create a new issue if you had any problem or
-have an improvement for TLCounter. It would be appreciated :).
+Make sure that you replace the `apiID`, `apiHash` and `password` variables in your own script. Read instructions [here](https://core.telegram.org/api/obtaining_api_id) for getting the `apiID` and `apihash` variables of Telegram.
 
 ## Credits
 
