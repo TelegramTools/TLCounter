@@ -1,8 +1,7 @@
-##### THIS SCRIIPT HAS BEEN MADE BY FERFERGA. PLEASE, DON'T CLAIM THAT IT IS FROM YOURS.
+##### THIS SCRIPT HAS BEEN MADE BY FERFERGA. PLEASE, DON'T CLAIM THAT IT IS FROM YOURS.
 ##### GIVE ALWAYS CREDITS TO ORIGINAL AUTHORS.
 #####
 ##### THANKS FOR USING!
-
 
 from telethon import *
 from telethon.tl.functions.channels import GetFullChannelRequest
@@ -18,7 +17,7 @@ import progressbar
 import sqlite3
 import getpass
 
-version = "1.7"
+version = "1.9"
 TotalDialogs = 0
 UserCount = 0
 ChannelCount = 0
@@ -30,8 +29,8 @@ NumUser = 0
 NumChat = 0
 NumSuper = 0
 UserId = None
-api_id = INSERT API ID HERE
-api_hash = 'INSERT APIHASH HERE!'
+api_id = YOUR_API_ID_HERE
+api_hash = 'YOUR API HASH HERE'
 TLdevice_model = 'Desktop device'
 TLsystem_version = 'Console'
 TLapp_version = '- TLCounter ' + version

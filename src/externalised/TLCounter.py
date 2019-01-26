@@ -1,3 +1,8 @@
+##### THIS SCRIPT HAS BEEN MADE BY FERFERGA. PLEASE, DON'T CLAIM THAT IT IS FROM YOURS.
+##### GIVE ALWAYS CREDITS TO ORIGINAL AUTHORS.
+#####
+##### THANKS FOR USING!
+
 from telethon import *
 from telethon.tl.functions.channels import GetFullChannelRequest
 from telethon.errors import FloodWaitError
@@ -11,12 +16,11 @@ import os
 import progressbar
 import sqlite3
 import getpass
-import json
 
 with open('config.json', 'r') as f:
     config = json.load(f)
 
-version = "1.7"
+version = "1.9"
 TotalDialogs = 0
 UserCount = 0
 ChannelCount = 0
@@ -226,13 +230,14 @@ def StartCount(dialogs):
             name = get_display_name(dialog.entity)
         if ID not in ConvertedGroupsIDs:
             count = GatherHistory(client.get_input_entity(dialog))
-            sprint(' {}: {}'.format(name, count))
             if isinstance(dialog.entity, Channel):
+                sprint(' {}: {}'.format(name, count) + " *")
                 if dialog.entity.megagroup == True:
                     SupCount = SupCount + count
                 else:
                     ChannelCount = ChannelCount + count
             elif isinstance(dialog.entity, (Chat, User)):
+                sprint(' {}: {}'.format(name, count))
                 UserCount = UserCount + count
         if ID in NewGroupsIDs:
             if (ID not in LookIds) and (ID in ConvertedGroupsIDs):
@@ -318,7 +323,7 @@ if UserCount < 1000000:
     print("\nYou have ", UserCount, " messages that count against your account's limits. Thus, you are not affected by this limit!")
 else:
     print("\nYou have ", UserCount, " messages that count against your account's limits. You are affected by the 1 M message limit.")
-print("\nChannels and supergroups have their own 1 million message limit, thus, they don't count against your account's quota.")
+print("\nChannels and supergroups have their own 1 million message limit, thus, they don't count against your account's quota.\nThey are marked with '*' in the chat list above.")
 
 print("\nCOUNTED COMPLETED! OPTIONS: ")
 while True:
