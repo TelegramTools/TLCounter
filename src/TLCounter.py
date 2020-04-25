@@ -4,16 +4,15 @@ from telethon.tl.functions.channels import GetFullChannelRequest
 from telethon.errors import FloodWaitError
 from telethon.utils import get_peer_id, get_input_peer, get_display_name
 from telethon.tl.types import Chat, User, Channel
-from datetime import datetime
+from datetime import datetime, timedelta
 from time import sleep
 from sys import exit
 from getpass import getpass
 from os import remove, path
-import logging
 import progressbar
 import sqlite3
 
-version = "2.0"
+__version__ = "2.0"
 TotalDialogs = 0
 UserCount = 0
 ChannelCount = 0
@@ -29,10 +28,12 @@ api_id = YOUR_API_ID_HERE
 api_hash = 'YOUR API HASH HERE'
 TLdevice_model = 'Desktop device'
 TLsystem_version = 'Console'
-TLapp_version = '- TLCounter ' + version
+TLapp_version = '- TLCounter ' + __version__
 TLlang_code = 'en'
 TLsystem_lang_code = 'en'
-client = TelegramClient('UserSession', api_id, api_hash, device_model=TLdevice_model, system_version=TLsystem_version, app_version=TLapp_version, lang_code=TLlang_code, system_lang_code=TLsystem_lang_code)
+
+client = TelegramClient('UserSession', api_id, api_hash, device_model=TLdevice_model, system_version=TLsystem_version, \
+    app_version=TLapp_version, lang_code=TLlang_code, system_lang_code=TLsystem_lang_code)
 
 def sprint(string, *args, **kwargs):
     """Safe Print (handle UnicodeEncodeErrors on some terminals)"""
@@ -42,6 +43,14 @@ def sprint(string, *args, **kwargs):
         string = string.encode('utf-8', errors='ignore')\
                        .decode('ascii', errors='ignore')
         print(string, *args, **kwargs)
+
+def countdown(t):
+    print("\n\n")
+    while t:
+        timeformat = '--> We have reached a flood limitation. Waiting for: ' + str(timedelta(seconds=t))
+        print(timeformat, end='\r')
+        sleep(1)
+        t -= 1
 
 def DBConnection(first, close):
     conn = sqlite3.connect("TLCounter-UserData.db")
@@ -55,14 +64,14 @@ def DBConnection(first, close):
         return conn
 
 def CreateTables(db):
-    global version
+    global __version__
     try:
         cursor = db.cursor()
         cursor.execute('''
         CREATE TABLE Version(AppName TEXT, AppVersion TEXT, CreationDate TEXT, LastUpdated TEXT)''')
         db.commit()
         date = str(datetime.today())
-        reg = ("TLCounter", version, date, None)
+        reg = ("TLCounter", __version__, date, None)
         db.execute("INSERT INTO Version VALUES(?,?,?,?)", reg)
         db.commit()
     except:
@@ -72,14 +81,11 @@ def GatherHistory(*args, **kwargs):
     try:
         return client.get_messages(*args, **kwargs, limit=0).total
     except FloodWaitError as e:
-        print("We have reached a flood limitation. Waiting for " + str(datetime.timedelta(seconds=e.seconds)))
-        sleep(e.seconds)
+        countdown(e.seconds)
         GatherHistory(*args, **kwargs)
     except Exception as e:
-        logging.exception("TLCOUNTER EXCEPTION IN GatherHistory: " + str(e))
-        logging.exception("ENTITY: " + str(*args, **kwargs))
         print("Something went wrong in Telegram's side. This is the full exception:\n\n" + str(e))
-        input("Press ENTER to try again the request and continue counting the messages...")
+        getpass("Press ENTER to try again the request and continue counting the messages: ")
         GatherHistory(*args, **kwargs)
     return
 
@@ -87,20 +93,17 @@ def SendRequest(*args, **kwargs):
     try:
         return client(*args, **kwargs)
     except FloodWaitError as e:
-        print("We have reached a flood limitation. Waiting for " + str(datetime.timedelta(seconds=e.seconds)))
-        sleep(e.seconds)
+        countdown(e.seconds)
         SendRequest(*args, **kwargs)
     except Exception as e:
-        logging.exception("TLCOUNTER EXCEPTION IN SendRequest: " + str(e))
-        logging.exception("ENTITY: " + str(*args, **kwargs))
         print("Something went wrong in Telegram's side. This is the full exception:\n\n" + str(e))
-        input("Press ENTER to try again the request and continue counting the messages...")
+        getpass("Press ENTER to try again the request and continue counting the messages: ")
         SendRequest(*args, **kwargs)
     return
 
 def StartCount(dialogs):
     global TotalDialogs, UserCount, ChannelCount, UserId, ConvertedGroupsIDs, NewGroupsIDs, NumChannel, NumUser, NumChat, \
-        NumSuper, SupCount, version
+        NumSuper, SupCount, __version__
     CachedSupergroups = []
     FirstRun = None
     database = DBConnection(False, False)
@@ -120,7 +123,7 @@ def StartCount(dialogs):
         database.commit()
     else:
         date = str(datetime.today())
-        reg5 = (date, version)
+        reg5 = (date, __version__)
         database.execute("UPDATE Version SET LastUpdated=?, AppVersion=?", reg5)
         database.commit()
         db3 = database.cursor()
@@ -222,22 +225,14 @@ def StartCount(dialogs):
                 UserCount = UserCount + count
         if ID in NewGroupsIDs:
             if (ID not in LookIds) and (ID in ConvertedGroupsIDs):
-                logging.warning("NOT PRESENT ID IN DIALOGS: " + str(ID))
                 continue
             else:
                 index = NewGroupsIDs.index(ID)
-                #DEBUG: logging.warning("ID: " + str(int("-" + str(ConvertedGroupsIDs[index]))))
                 OldChatCount = GatherHistory(client.get_input_entity(int("-" + str(ConvertedGroupsIDs[index]))))
                 print("· !--> You also have ", OldChatCount, " messages before '" + name + "' was converted into a supergroup.")
                 UserCount = UserCount + OldChatCount
 
 ##ENTRY POINT OF THE CODE
-try:
-    remove("TLCounter-log.log")
-except:
-    pass
-logging.basicConfig(filename="TLCounter-log.log", level=logging.DEBUG, format='%(asctime)s %(message)s')
-logging.warning("THIS IS CORRECTLY BEING LOGGED!")
 print("Welcome to Telegram Chat Counter! This app made by ferferga will count the total number of messages in your account.\n")
 print("\n")
 if not client.is_connected():
