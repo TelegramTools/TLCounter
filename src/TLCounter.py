@@ -1,23 +1,19 @@
-##### THIS SCRIPT HAS BEEN MADE BY FERFERGA. PLEASE, DON'T CLAIM THAT IT'S YOURS.
-##### GIVE ALWAYS CREDITS TO ORIGINAL AUTHORS.
-#####
-##### THANKS FOR USING!
-
-from telethon import *
+#!/usr/bin/python3
+from telethon.sync import TelegramClient
 from telethon.tl.functions.channels import GetFullChannelRequest
 from telethon.errors import FloodWaitError
-import telethon
-from telethon.utils import *
-from telethon.tl.functions.messages import *
-import sys
-import datetime
+from telethon.utils import get_peer_id, get_input_peer, get_display_name
+# from telethon.tl.functions.messages import *
+from datetime import datetime
+from time import sleep
+from sys import exit
 import logging
 import os
 import progressbar
 import sqlite3
 import getpass
 
-version = "1.9"
+version = "2.0"
 TotalDialogs = 0
 UserCount = 0
 ChannelCount = 0
@@ -65,7 +61,7 @@ def CreateTables(db):
         cursor.execute('''
         CREATE TABLE Version(AppName TEXT, AppVersion TEXT, CreationDate TEXT, LastUpdated TEXT)''')
         db.commit()
-        date = str(datetime.datetime.today())
+        date = str(datetime.today())
         reg = ("TLCounter", version, date, None)
         db.execute("INSERT INTO Version VALUES(?,?,?,?)", reg)
         db.commit()
@@ -77,7 +73,7 @@ def GatherHistory(*args, **kwargs):
         return client.get_messages(*args, **kwargs, limit=0).total
     except FloodWaitError as e:
         print("We have reached a flood limitation. Waiting for " + str(datetime.timedelta(seconds=e.seconds)))
-        time.sleep(e.seconds)
+        sleep(e.seconds)
         GatherHistory(*args, **kwargs)
     except Exception as e:
         logging.exception("TLCOUNTER EXCEPTION IN GatherHistory: " + str(e))
@@ -92,7 +88,7 @@ def SendRequest(*args, **kwargs):
         return client(*args, **kwargs)
     except FloodWaitError as e:
         print("We have reached a flood limitation. Waiting for " + str(datetime.timedelta(seconds=e.seconds)))
-        time.sleep(e.seconds)
+        sleep(e.seconds)
         SendRequest(*args, **kwargs)
     except Exception as e:
         logging.exception("TLCOUNTER EXCEPTION IN SendRequest: " + str(e))
@@ -103,18 +99,8 @@ def SendRequest(*args, **kwargs):
     return
 
 def StartCount(dialogs):
-    global TotalDialogs
-    global UserCount
-    global ChannelCount
-    global UserId
-    global ConvertedGroupsIDs
-    global NewGroupsIDs
-    global NumChannel
-    global NumUser
-    global NumChat
-    global NumSuper
-    global SupCount
-    global version
+    global TotalDialogs, UserCount, ChannelCount, UserId, ConvertedGroupsIDs, NewGroupsIDs, NumChannel, NumUser, NumChat, \
+        NumSuper, SupCount, version
     CachedSupergroups = []
     FirstRun = None
     database = DBConnection(False, False)
@@ -128,14 +114,14 @@ def StartCount(dialogs):
     if FirstRun is True:
         cursor = database.cursor()
         cursor.execute('''CREATE TABLE GroupsInfo(SuperGroupID INTEGER PRIMARY KEY, OldGroupID INTEGER)''')
-        date = str(datetime.datetime.today())
+        date = str(datetime.today())
         reg5 = (date,)
-        database.execute("""UPDATE Version SET LastUpdated=?""", reg5)
+        database.execute("UPDATE Version SET LastUpdated=?", reg5)
         database.commit()
     else:
-        date = str(datetime.datetime.today())
+        date = str(datetime.today())
         reg5 = (date, version)
-        database.execute("""UPDATE Version SET LastUpdated=?, AppVersion=?""", reg5)
+        database.execute("UPDATE Version SET LastUpdated=?, AppVersion=?", reg5)
         database.commit()
         db3 = database.cursor()
         db3.execute('SELECT * FROM GroupsInfo')
@@ -203,8 +189,6 @@ def StartCount(dialogs):
                         ConvertedGroupsIDs.append(row[1])
     bar.finish()
     DBConnection(False, True)
-    #DEBUG: logging.warning("NEW GROUP IDS: " + str(NewGroupsIDs))
-    #DEBUG: logging.warning("CONVERTED GROUP IDS: " + str(ConvertedGroupsIDs))
     print("\nAll is ready. Counting your chats: ")
     print()
     for dialog in dialogs:
@@ -314,15 +298,7 @@ else:
     print("· Number of Supergroups: ", NumSuper)
 print("· Number of Normal groups: ", NumChat)
 print("· Number of conversations with individual users: ", NumUser)
-print("\n\n")
-print("If you reach 1 million messages with Users and normal groups, old messages will be archived in your account,\nbut NEVER deleted. That means that they will no longer be accessible.\nThat's a Telegram's limitation, unfortunately.")
-if UserCount < 1000000:
-    print("\nYou have ", UserCount, " messages that count against your account's limits. Thus, you are not affected by this limit!")
-else:
-    print("\nYou have ", UserCount, " messages that count against your account's limits. You are affected by the 1 M message limit.")
-print("\nChannels and supergroups have their own 1 million message limit, thus, they don't count against your account's quota.\nThey are marked with '*' in the chat list above.")
-
-print("\nCOUNTED COMPLETED! OPTIONS: ")
+print("\n\nCOUNTED COMPLETED! OPTIONS: ")
 while True:
     print("\nDo you want to log out of TLCounter? If you want to count your messages frequently, you might want to keep your session logged in.")
     print("> Available commands: ")
@@ -343,9 +319,9 @@ while True:
     if (answer == "!Q"):
         client.disconnect()
         input("Done! Press ENTER to close TLCounter! ")
-        sys.exit(0)
+        exit(0)
     if (answer == "!1"):
         print("Logging you out of Telegram...")
         client.log_out()
         input("Done! Press ENTER to close TLCounter! ")
-        sys.exit(0)
+        exit(0)
