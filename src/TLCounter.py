@@ -276,7 +276,7 @@ StartCount(dialogs)
 TotalDialogs = UserCount + ChannelCount + SupCount
 ConvertedCount = len(NewGroupsIDs)
 NumChat = NumChat - ConvertedCount
-print("\n\n")
+print("\n")
 print("-----------------------------------------------------")
 print("| TOTAL COUNTS                                       |")
 print("· Normal groups and chats:", UserCount)
@@ -288,7 +288,7 @@ print("-----------------------------------------------------")
 print("| OTHER INTERESTING DETAILS                          |")
 print("· Number of Channels:", NumChannel)
 if ConvertedCount != 0:
-    print("· Number of Supergroups:", NumSuper, "(", ConvertedCount, "of those groups have been converted from normal groups to supergroups)")
+    print("· Number of Supergroups:", NumSuper, "(" + str(ConvertedCount), "of those groups have been converted from normal groups to supergroups)")
 else:
     print("· Number of Supergroups:", NumSuper)
 print("· Number of Normal groups:", NumChat)
