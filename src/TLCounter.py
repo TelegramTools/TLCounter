@@ -3,15 +3,15 @@ from telethon.sync import TelegramClient
 from telethon.tl.functions.channels import GetFullChannelRequest
 from telethon.errors import FloodWaitError
 from telethon.utils import get_peer_id, get_input_peer, get_display_name
-# from telethon.tl.functions.messages import *
+from telethon.tl.types import Chat, User, Channel
 from datetime import datetime
 from time import sleep
 from sys import exit
+from getpass import getpass
+from os import remove, path
 import logging
-import os
 import progressbar
 import sqlite3
-import getpass
 
 version = "2.0"
 TotalDialogs = 0
@@ -233,7 +233,7 @@ def StartCount(dialogs):
 
 ##ENTRY POINT OF THE CODE
 try:
-    os.remove("TLCounter-log.log")
+    remove("TLCounter-log.log")
 except:
     pass
 logging.basicConfig(filename="TLCounter-log.log", level=logging.DEBUG, format='%(asctime)s %(message)s')
@@ -245,24 +245,24 @@ if not client.is_connected():
         print("Connecting to Telegram...")
         client.connect()
         if not client.is_connected():
-            getpass.getpass("A connection to Telegram couldn't be established. Press ENTER to try again: ")
+            getpass("A connection to Telegram couldn't be established. Press ENTER to try again: ")
         else:
             break
     if not client.is_user_authorized():
         client.start(force_sms=False)
         while True:
             if not client.is_user_authorized():
-                getpass.getpass("The phone, or the code you typed is invalid, because you couldn't log in.\nPress ENTER to try again: ")
+                getpass("The phone, or the code you typed is invalid, because you couldn't log in.\nPress ENTER to try again: ")
             if client.is_user_authorized():
                 print("\nSuccessfully logged in!")
                 break
         try:
-            os.remove("TLCounter-UserData.db")
+            remove("TLCounter-UserData.db")
         except:
             pass
         DBConnection(True, False)
     else:
-        if os.path.isfile("TLCounter-UserData.db"):
+        if path.isfile("TLCounter-UserData.db"):
             DBConnection(False, False)
         else:
             DBConnection(True, False)
@@ -275,7 +275,7 @@ else:
 
 print("Getting your chat list...")
 dialogs = client.get_dialogs(limit=None)
-print('You have ', dialogs.total, ' chats. Processing...')
+print('You have', dialogs.total, 'chats. Processing...')
 print()
 StartCount(dialogs)
 TotalDialogs = UserCount + ChannelCount + SupCount
@@ -284,21 +284,21 @@ NumChat = NumChat - ConvertedCount
 print("\n\n")
 print("-----------------------------------------------------")
 print("| TOTAL COUNTS                                       |")
-print("· Normal groups and chats: ", UserCount)
-print("· Channels: ", ChannelCount)
-print("· Supergroups: ", SupCount)
-print("· TOTAL MESSAGES: ", TotalDialogs)
+print("· Normal groups and chats:", UserCount)
+print("· Channels:", ChannelCount)
+print("· Supergroups:", SupCount)
+print("· TOTAL MESSAGES:", TotalDialogs)
 print()
 print("-----------------------------------------------------")
 print("| OTHER INTERESTING DETAILS                          |")
-print("· Number of Channels: ", NumChannel)
+print("· Number of Channels:", NumChannel)
 if ConvertedCount != 0:
-    print("· Number of Supergroups: ", NumSuper, "(", ConvertedCount, " of those groups have been converted from normal groups to supergroups.)")
+    print("· Number of Supergroups:", NumSuper, "(", ConvertedCount, "of those groups have been converted from normal groups to supergroups)")
 else:
-    print("· Number of Supergroups: ", NumSuper)
-print("· Number of Normal groups: ", NumChat)
-print("· Number of conversations with individual users: ", NumUser)
-print("\n\nCOUNTED COMPLETED! OPTIONS: ")
+    print("· Number of Supergroups:", NumSuper)
+print("· Number of Normal groups:", NumChat)
+print("· Number of conversations with individual users:", NumUser)
+print("\n\nCOUNTED COMPLETED! OPTIONS:")
 while True:
     print("\nDo you want to log out of TLCounter? If you want to count your messages frequently, you might want to keep your session logged in.")
     print("> Available commands: ")
@@ -318,10 +318,9 @@ while True:
                 break
     if (answer == "!Q"):
         client.disconnect()
-        input("Done! Press ENTER to close TLCounter! ")
         exit(0)
     if (answer == "!1"):
         print("Logging you out of Telegram...")
         client.log_out()
-        input("Done! Press ENTER to close TLCounter! ")
+        getpass("Done! Press ENTER to close TLCounter!: ")
         exit(0)
